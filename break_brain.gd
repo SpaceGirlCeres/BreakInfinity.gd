@@ -50,3 +50,41 @@ func div(num2 : Large) -> Large:
 	num1.man /= num2.man
 	num1.power -= num2.power
 	return num1.normalize()
+	
+func is_equ(num2: Large) -> bool:
+	var num1 = self
+	return (num1.man == num2.man) and (num1.power == num2.power)
+	
+func not_equ(num2: Large) -> bool:
+	var num1 = self
+	return ! num1.is_equ(num2)
+
+func is_greater(num2: Large) -> bool:
+	var num1 = self
+	if num1.power > num2.power:
+		return true
+	elif (num1.man > num2.man) and (num1.power == num2.power):
+		return true
+	else:
+		return false
+
+func is_less(num2: Large) -> bool:
+	var num1 = self
+	if num1.power < num2.power:
+		return true
+	elif (num1.man < num2.man) and (num1.power == num2.power):
+		return true
+	else:
+		return false
+
+func greater_equ(num2: Large) -> bool:
+	var num1 = self
+	return num1.is_equ(num2) or num1.is_greater(num2)
+	
+func less_equ(num2: Large) -> bool:
+	var num1 = self
+	return num1.is_equ(num2) or num1.is_less(num2)
+
+func large_str() -> String:
+	return str(man, "e", power)
+	
