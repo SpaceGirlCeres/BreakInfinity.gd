@@ -24,10 +24,9 @@ func large(mantissa, exponent) -> Large:
 	return Large.new(mantissa, exponent)
 
 func normalize() -> Large:
-	if (! man) or (man != man): 
-		if power != INF:
-			power = 0
-	elif ! (1 <= abs(man) and abs(man) < 10):
+	if (! man) or (man != man):
+		power = (power == INF) and INF
+	elif (abs(man) < 1 or abs(man) >= 10):
 		var norm = floor(Math.loger(abs(man))+0.0000000000001)
 		power += norm
 		man /= 10**norm
@@ -44,7 +43,6 @@ func _add(num2: Large) -> Large:
 		var temp = num2
 		num2 = num1
 		num1 = temp
-	
 	num1.man += num2.man / 10**(num1.power-num2.power)
 	return num1.normalize()
 	
@@ -52,21 +50,19 @@ func _sub(num2: Large) -> Large:
 	return _add(num2.neg())
 	
 func _mult(num2 : Large) -> Large:
-	var num1 = self
-	num1.man *= num2.man
-	num1.power += num2.power
-	return num1.normalize()
+	man *= num2.man
+	power += num2.power
+	return normalize()
 
 func _div(num2 : Large) -> Large:
-	var num1 = self
 	if !num2.man:
-		if num1.man:
-			return large(NAN, sign(num1.man)+INF)
+		if man:
+			return large(NAN, sign(man)*INF)
 		return large(NAN, NAN)
 		
-	num1.man /= num2.man
-	num1.power -= num2.power
-	return num1.normalize()
+	man /= num2.man
+	power -= num2.power
+	return normalize()
 	
 	
 # complex math
@@ -89,29 +85,19 @@ func not_equ(num2: Large) -> bool:
 
 func is_greater(num2: Large) -> bool:
 	var num1 = self
-	if num1.power > num2.power:
-		return true
-	elif (num1.man > num2.man) and (num1.power == num2.power):
-		return true
-	else:
-		return false
+	return (num1.power > num2.power) or ((num1.man > num2.man) and (num1.power == num2.power))
 
 func is_less(num2: Large) -> bool:
 	var num1 = self
-	if num1.power < num2.power:
-		return true
-	elif (num1.man < num2.man) and (num1.power == num2.power):
-		return true
-	else:
-		return false
+	return (num1.power < num2.power) or ((num1.man < num2.man) and (num1.power == num2.power))
 
 func greater_equ(num2: Large) -> bool:
 	var num1 = self
-	return num1.is_equ(num2) or num1.is_greater(num2)
+	return ! num1.is_less(num2)
 	
 func less_equ(num2: Large) -> bool:
 	var num1 = self
-	return num1.is_equ(num2) or num1.is_less(num2)
+	return ! num1.is_greater(num2)
 
 
 # large to other type
@@ -128,4 +114,3 @@ func large_float() -> float:
 		return float(man*10**power)
 	else:
 		return INF
-	
