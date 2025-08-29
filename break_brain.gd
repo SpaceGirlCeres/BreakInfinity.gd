@@ -12,7 +12,7 @@ class_name Large
 # Large has support for numbers up to ee308
 
 var man := 0.0
-var power = 0
+var power : float = 0
 
 func _init(_man: float, _power) -> void:
 	man = _man
@@ -64,6 +64,8 @@ func _div(num2 : Large) -> Large:
 	power -= num2.power
 	return normalize()
 	
+func neg():
+	return large(-man, power)
 	
 # complex math
 func _log(base: Large) -> Large:
@@ -110,7 +112,7 @@ func large_str() -> String:
 		return str(man*10**power)
 	
 func large_float() -> float:
-	if power < 308:
-		return float(man*10**power)
+	if (man < 1.79769 and power <= 308) or power < 308:
+		return float(large_str())
 	else:
 		return INF
