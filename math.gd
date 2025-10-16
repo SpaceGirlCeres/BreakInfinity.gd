@@ -11,7 +11,7 @@ func scientist(num: float) -> String:
 	if num >= starting_num:
 		return str(mantissa) + 'e' + str(exponent)
 	else:
-		return str(num)
+		return "%0.3f" % num
 	
 func loger(num, base = 10) -> float: 
-	return float(log(num)/log(base))
+	return rounded(float(log(num)/log(base)))
